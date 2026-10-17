@@ -1,0 +1,8 @@
+{
+  "name": "CalcPulse - Modern Scientific Calculator",
+  "description": "A sleek, responsive calculator app featuring standard and scientific modes, calculation history, unit conversions, memory functions, and full keyboard support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
