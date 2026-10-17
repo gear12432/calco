@@ -1,5 +1,15 @@
 import type {NextConfig} from 'next';
 
+const isGithubActions = process.env.GITHUB_ACTIONS || false;
+let repo = '';
+
+if (isGithubActions && process.env.GITHUB_REPOSITORY) {
+  repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
+}
+
+const assetPrefix = process.env.NEXT_PUBLIC_BASE_PATH || (repo ? `/${repo}/` : '');
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (repo ? `/${repo}` : '');
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   eslint: {
@@ -8,22 +18,22 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Allow access to remote image placeholder.
+  output: 'export', // Required for GitHub Pages static export
   images: {
+    unoptimized: true, // Required for static export with next/image
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**',
       },
     ],
   },
-  output: 'standalone',
+  ...(basePath ? { basePath } : {}),
+  ...(assetPrefix ? { assetPrefix } : {}),
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {
-    // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modify—file watching is disabled to prevent flickering during agent edits.
     if (dev && process.env.DISABLE_HMR === 'true') {
       config.watchOptions = {
         ignored: /.*/,
